@@ -38,11 +38,11 @@ $active_group = "default";
 $active_record = TRUE;
 
 $db['default']['hostname'] = "localhost";
-$db['default']['username'] = "greg";
-$db['default']['password'] = "hndxtmx1997";
-$db['default']['database'] = "NTSDF";
+$db['default']['username'] = "";
+$db['default']['password'] = "";
+$db['default']['database'] = "";
 $db['default']['dbdriver'] = "mysql";
-$db['default']['dbprefix'] = "linkup_";
+$db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = FALSE;//是否使用持续连接（改为否，否则会占用连接资源）
 $db['default']['db_debug'] = TRUE;
 $db['default']['cache_on'] = FALSE;
