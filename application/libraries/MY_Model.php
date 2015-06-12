@@ -41,11 +41,17 @@ class MY_Model extends Model{
      * 为数字时，表示主键字段id值为$where值,相当于id=$where
      *      使用实例：$where = 1;
      * 为字符串时，表示字符串条件表达式
-     *      使用实例：$where = "`title`='xxx' and `type`=1";
+     *      使用实例：$where = "name='Joe' AND status='boss' OR status='active'";
      * 为数组时，默认为键表示字段，值表示字段值，相当于field=fieldValue,
      *        如果数组值为数组类型则判断第一个元素是否为特殊值，第二个元素为条件值
-     *      使用实例：$where = array('id', array('in', array(1,2,3,4,5)) );
-     *             $where = array('title', array('like', '搜索标题', 'before'));
+     *      使用实例：
+     *              $where['type'] = 1;
+     *              $where['startTime >'] = $time;
+     *              $where[] = array('id'=>$id);
+     *              $where[] = array('date >' => $date);
+     *              $where[] = array('type !=' => $type);
+     *              $where[] = array('id', array('in', array(1,2,3,4,5)) );
+     *              $where[] = array('title', array('like', '搜索标题', 'before'));
      * 三种条件只能使用一种方式，个人建议使用数组形式，在列表查询时用数组更加灵活限制查询条件
      * @param array|string $where
      */
@@ -75,6 +81,20 @@ class MY_Model extends Model{
             }
         }
         $this->db->where($where);
+        return true;
+    }
+    /**
+     * 设置限制条数
+     * @param  mix $limit 限制条数，（*：全部，int：条数）
+     * @return [type]        [description]
+     */
+    function __setLimit($limit){
+        if (is_int($limit)) {
+            $this->db->limit($limit);
+        }else if ($limit == '*') {
+            
+        }
+        return true;
     }
     /**
      * 返回指定条件的单条数据
@@ -156,8 +176,8 @@ class MY_Model extends Model{
         //查询数据
         $findData = $this->getData($where);
         if ($findData){
-            $this->__setWhere(array('id'=>$findData['id']));
-            $this->db->limit($limit);
+            $this->__setWhere($findData['id']);
+            $this->__setLimit($limit);
             $this->db->update($this->table, $data);
             //更新父级金额
             $parentId = $this->getParentId($findData);
@@ -178,10 +198,10 @@ class MY_Model extends Model{
     function upset($where = array(),$data = array()){
         $findData = $this->getData($where);
         if ($findData){
-            $this->db->update($this->table, $data,$where,1);
+            $this->db->update($this->table, $data, $where, 1);
             return $findData['id'];
         }else{
-            $this->db->insert($this->table, array_merge($where,$data));
+            $this->db->insert($this->table, array_merge($where, $data));
             $insertId= $this->db->insert_id();
             return $insertId;
         }
@@ -196,7 +216,7 @@ class MY_Model extends Model{
         $findData = $this->getData($where);
         if ($findData){
             $this->__setWhere($where);
-            $this->db->limit($limit);
+            $this->__setLimit($limit);
             $this->db->delete($this->table);
             //更新父级金额
             $parentId = $this->getParentId($findData);
