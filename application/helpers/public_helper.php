@@ -42,3 +42,23 @@ function ajaxFormat($statusCode = 1,$message = '',$data = array()){
     $data = array('statusCode'=>$statusCode, 'message' => $message, 'data'=>$data);
     return $data;
 }
+/**
+ * gbk编码转换为UTF8编码
+ * @param  string $str
+ * @return string
+ */
+function gb2utf8($str) {
+    if ( empty($str) ) return $str;
+    return iconv('gbk//ignore', 'utf-8', $str);
+    if(function_exists('iconv')){ return iconv('gbk//ignore','utf-8',$str); }
+    if (function_exists('mb_convert_encoding')) { return mb_convert_encoding($str,'gbk','utf-8'); }
+}
+/**
+ * UTF8编码转换为GBK编码
+ * @param  string $utfstr
+ * @return string
+ */
+function utf82gb($utfstr) {
+    if(function_exists('iconv')){ return iconv('utf-8','gbk//ignore',$utfstr); }
+    if (function_exists('mb_convert_encoding')) { return mb_convert_encoding($utfstr,'utf-8','gbk'); }
+}
