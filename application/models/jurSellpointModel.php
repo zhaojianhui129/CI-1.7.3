@@ -7,7 +7,8 @@
 class jurSellpointModel extends MY_Model{
     function jurSellpointModel(){
         parent::MY_Model();
-        $this->table = 'NTSDF.js_jurisdiction_sellpoint';
+        $this->db = $this->load->database('NTSDF', true);
+        $this->table = 'js_jurisdiction_sellpoint';
     }
     /**
      * 获取用户角色ID
