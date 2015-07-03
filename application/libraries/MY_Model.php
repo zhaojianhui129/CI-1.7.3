@@ -100,7 +100,10 @@ class MY_Model extends Model{
      * 返回指定条件的单条数据
      * @param array $where
      */
-    function getData($where = ''){
+    function getData($where = '', $colum = ''){
+        if ($colum){
+            $this->db->select($colum);
+        }
         $this->__setWhere($where);
         $query = $this->db->get($this->table,1);
         return $query -> row_array();
@@ -113,8 +116,11 @@ class MY_Model extends Model{
      * @param mixed $orderby 排序（数组或字符串）
      * @return array
      */
-    function getList($where = '', $limit = NULL, $offset = NULL, $orderby =''){
+    function getList($where = '', $limit = NULL, $offset = NULL, $colum = '', $orderby = ''){
         $this->__setWhere($where);
+        if ($colum){
+            $this->db->select($colum);
+        }
         if ($orderby){
             $this->db->order_by($orderby);
         }
