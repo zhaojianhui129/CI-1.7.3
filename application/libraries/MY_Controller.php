@@ -112,45 +112,20 @@ class MY_Controller extends Controller
     var $form_validation ;
     
     //用户信息
-    var $userInfo;
+    var $userInfo = NULL;
     //传给视图的数据
     var $viewData = array();
 
     function MY_Controller()
     {
         parent::Controller();
-        //初始化用户信息
-        $this->initUserInfo();
-        //加载认证类，全局可以调用
-        $this->load->library('auth',$this->userInfo);
-        if (!$this->auth->checkSystem()){
+        $this->load->library('User');
+        $this->userInfo = $this->user->getUserInfo();
+        if (! $this->userInfo){
             $this->error('您无权限登陆此系统');
         }
-    }
-    /**
-     * 初始化用户信息
-     */
-    function initUserInfo(){
-        //营销网登陆保存的session信息
-        if (!isset($_SESSION['DLRID']) || $_SESSION['DLRNAME'] == "")
-        {
-            //$this->error('您还未登陆，不能操作');
-        }
-        //载入session类
-        $userId = $this->session->userdata('userId');
-        
-        $username = $_COOKIE['lAccount'];
-        $password = $_COOKIE['lPassword'];
-        if ($userId != $_SESSION['DLRID']){//用户切换，更新用户信息
-            //用户ID
-            $this->session->set_userdata('userId', $_SESSION['DLRID']);
-            //用户名称
-            $this->session->set_userdata('userName', $_SESSION['lAccount']);
-            //用户角色
-            $userRole = 0;
-            $this->session->set_userdata('userRole', $userRole);
-        }
-        $this->userInfo = $this->session->all_userdata();
+        //加载认证类，全局可以调用
+        $this->load->library('auth', $this->userInfo);
     }
     /**
      * 页面跳转方法，基本方法，涵盖异步请求的判断
