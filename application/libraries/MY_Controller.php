@@ -111,81 +111,29 @@ class MY_Controller extends Controller
      */
     var $form_validation ;
     
+    //菜单列表
+    var $navbarList = null;
+    //当前选中菜单
+    var $navbarFocus = '';
     //用户信息
-    var $userInfo = NULL;
+    var $user = NULL;
     //传给视图的数据
     var $viewData = array();
 
     function MY_Controller()
     {
         parent::Controller();
-        $this->load->library('User');
-        $this->userInfo = $this->user->getUserInfo();
-        if (! $this->userInfo){
-            $this->error('您无权限登陆此系统');
+        $this->load->library('User', null, 'userLib');
+        $this->user = $this->userLib->getUserInfo();
+        if (! $this->user){
+            showError('您无权限登陆此系统');
         }
+        //加载菜单，全局使用
+        $this->load->library('Navbar', $this->user);
+        $this->navbarList = $this->navbar->getNavbarList();
+        //当前选中菜单默认为当前控制器
+        $this->navbarFocus = $this->input->get('c');
         //加载认证类，全局可以调用
-        $this->load->library('auth', $this->userInfo);
-    }
-    /**
-     * 页面跳转方法，基本方法，涵盖异步请求的判断
-     * @param number $status
-     * @param string $message
-     * @param number $waitSecond
-     * @param string $jumpUrl
-     */
-    function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond=1){
-        $jumpUrl || $jumpUrl =  $this->input->server('HTTP_REFERER');
-        $msgTitle = '';
-        if ($status == 1){
-            $msgTitle = '操作成功';
-        }elseif ($status == 2){
-            $msgTitle = '操作失败';
-        }elseif ($status == 3){
-            $msgTitle = '信息提示';
-        }
-        $message || $message = $msgTitle;
-        
-        if (isAjax()){//判断是否为异步请求
-            echo json_encode(ajaxFormat($status,$message,array('waitSecond'=>$waitSecond,'jumpUrl'=>$jumpUrl)));
-            exit();
-        }else{
-            $data = array(
-                'status' => $status,
-                'msgTitle' => $msgTitle,
-                'message' => $message,
-                'waitSecond' => $waitSecond,
-                'jumpUrl' => $jumpUrl
-            );
-            echo $this->load->view('common/dispatchJump', $data, true);
-            exit();
-        }
-    }
-    /**
-     * 成功跳转或ajax异步返回
-     * @param string $message
-     * @param string $jumpUrl
-     * @param number $waitSecond
-     */
-    function success($message = '', $jumpUrl = '', $waitSecond=1){
-        $this->dispatchJump(1, $message, $jumpUrl, $waitSecond);
-    }
-    /**
-     * 错误跳转或ajax异步返回
-     * @param string $message
-     * @param string $jumpUrl
-     * @param number $waitSecond
-     */
-    function error($message = '', $jumpUrl = '', $waitSecond=1){
-        $this->dispatchJump(2, $message, $jumpUrl, $waitSecond);
-    }
-    /**
-     * 提示跳转或ajax异步返回
-     * @param string $message
-     * @param string $jumpUrl
-     * @param number $waitSecond
-     */
-    function notice($message = '', $jumpUrl = '', $waitSecond=1){
-        $this->dispatchJump(3, $message, $jumpUrl, $waitSecond);
+        $this->load->library('Auth', $this->user);
     }
 }

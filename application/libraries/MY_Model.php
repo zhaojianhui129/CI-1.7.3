@@ -58,16 +58,20 @@ class MY_Model extends Model{
     function __setWhere($where){
         $where || exit('请输入条件');
         if (is_int($where)){//如果为整数表示为主键
-            $where = array('id',$where);
+            $where = array('id'=>$where);
         }elseif (is_string($where)){//字符串条件
             
         }elseif (is_array($where)){//数组条件
             foreach ($where as $k => $v){
                 if (is_array($v) && count($v) >= 2 && in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn', 'like', 'orLike', 'notLike', 'orNotLike')) && is_array($v)){
-                    $v[0] == 'in' && $this->db->where_in($k, (array)$v[1]);
-                    $v[0] == 'orIn' && $this->db->or_where_in($k, (array)$v[1]);
-                    $v[0] == 'notIn' && $this->db->where_not_in($k, (array)$v[1]);
-                    $v[0] == 'orNotIn' && $this->db->or_where_not_in($k, (array)$v[1]);
+                    if (in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn'))){
+                        $v[1] = (array)$v[1];
+                        $v[1][] = 0; 
+                    }
+                    $v[0] == 'in' && $this->db->where_in($k, $v[1]);
+                    $v[0] == 'orIn' && $this->db->or_where_in($k, $v[1]);
+                    $v[0] == 'notIn' && $this->db->where_not_in($k, $v[1]);
+                    $v[0] == 'orNotIn' && $this->db->or_where_not_in($k, $v[1]);
                     //like查询时判断是否传第三个参数，第三个参数代表匹配符位置，默认匹配模式为both
                     if (in_array($v[0], array('like','orLike','notLike','orNotLike'))){
                         $v[2] = isset($v[2]) && in_array((string)$v[2], array('before','after','both')) ? $v[2] : 'both';
@@ -182,7 +186,7 @@ class MY_Model extends Model{
         //查询数据
         $findData = $this->getData($where);
         if ($findData){
-            $this->__setWhere($findData['id']);
+            $this->__setWhere((int)$findData['id']);
             $this->__setLimit($limit);
             $this->db->update($this->table, $data);
             //更新父级金额

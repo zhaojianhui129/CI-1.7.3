@@ -53,12 +53,10 @@ class User{
         {
             return false;
         }
-        
         $this->user['userId']      = $CI->session->userdata('userId');
         $this->user['userName']    = $CI->session->userdata('userName');
         $this->user['userRole']    = $CI->session->userdata('userRole');
         $this->user['userLimit']   = $CI->session->userdata('userLimit');
-        
         if ($this->user['userId'] != $_SESSION['DLRID']){
             //当前登陆用户名密码
             $username = $_COOKIE['lAccount'];
