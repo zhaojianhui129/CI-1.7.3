@@ -11,7 +11,7 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "http://www.myci.com/";
+$config['base_url']	= "http://www.dongfeng.com/bc2015/";
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ $config['index_page'] = "index.php";
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= "AUTO";
+$config['uri_protocol']	= "QUERY_STRING";
 
 /*
 |--------------------------------------------------------------------------
@@ -231,7 +231,7 @@ $config['encryption_key'] = "";
 | 'time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';
+$config['sess_cookie_name']		= 'dflpvmkt_session';
 $config['sess_expiration']		= 7200;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
@@ -250,7 +250,7 @@ $config['sess_time_to_update'] 	= 300;
 | 'cookie_path'   =  Typically will be a forward slash
 |
 */
-$config['cookie_prefix']	= "";
+$config['cookie_prefix']	= "bc2015_";
 $config['cookie_domain']	= "";
 $config['cookie_path']		= "/";
 

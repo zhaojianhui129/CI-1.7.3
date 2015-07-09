@@ -57,17 +57,21 @@ class MY_Model extends Model{
      */
     function __setWhere($where){
         $where || exit('请输入条件');
-        if (is_int($where)){//如果为整数表示为主键
-            $where = array('id',$where);
+        if (is_numeric($where)){//如果为整数表示为主键
+            $where = array('id'=>(int)$where);
         }elseif (is_string($where)){//字符串条件
             
         }elseif (is_array($where)){//数组条件
             foreach ($where as $k => $v){
                 if (is_array($v) && count($v) >= 2 && in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn', 'like', 'orLike', 'notLike', 'orNotLike')) && is_array($v)){
-                    $v[0] == 'in' && $this->db->where_in($k, (array)$v[1]);
-                    $v[0] == 'orIn' && $this->db->or_where_in($k, (array)$v[1]);
-                    $v[0] == 'notIn' && $this->db->where_not_in($k, (array)$v[1]);
-                    $v[0] == 'orNotIn' && $this->db->or_where_not_in($k, (array)$v[1]);
+                    if (in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn'))){
+                        $v[1] = (array)$v[1];
+                        $v[1][] = 0; 
+                    }
+                    $v[0] == 'in' && $this->db->where_in($k, $v[1]);
+                    $v[0] == 'orIn' && $this->db->or_where_in($k, $v[1]);
+                    $v[0] == 'notIn' && $this->db->where_not_in($k, $v[1]);
+                    $v[0] == 'orNotIn' && $this->db->or_where_not_in($k, $v[1]);
                     //like查询时判断是否传第三个参数，第三个参数代表匹配符位置，默认匹配模式为both
                     if (in_array($v[0], array('like','orLike','notLike','orNotLike'))){
                         $v[2] = isset($v[2]) && in_array((string)$v[2], array('before','after','both')) ? $v[2] : 'both';
@@ -89,7 +93,7 @@ class MY_Model extends Model{
      * @return [type]        [description]
      */
     function __setLimit($limit){
-        if (is_int($limit)) {
+        if (is_numeric($limit)) {
             $this->db->limit($limit);
         }else if ($limit == '*') {
             
@@ -107,6 +111,16 @@ class MY_Model extends Model{
         $this->__setWhere($where);
         $query = $this->db->get($this->table,1);
         return $query -> row_array();
+    }
+    /**
+     * 获取包装处理后的数据
+     * @param array $where
+     * @return array
+     */
+    function getNewData($where){
+        $findData = $this->getData($where);
+        $data = $this->packing(array($findData));
+        return $data[0];
     }
     /**
      * 获取指定条件的列表数据
@@ -135,6 +149,26 @@ class MY_Model extends Model{
             }
         }
         return $list;
+    }
+    /**
+     * 获取包装后的列表
+     * @param mix $where
+     * @param string $limit
+     * @param string $offset
+     * @param string $colum
+     * @param string $orderby
+     */
+    function getNewList($where, $limit = NULL, $offset = NULL, $colum = '', $orderby = ''){
+        $findList = $this->getList($where, $limit, $offset, $colum, $orderby);
+        return $this->packing($findList);
+    }
+    /**
+     * 子类覆盖此方法，达到不同数据模型处理方式不一样
+     * @param array $list
+     * @return array
+     */
+    function packing($list = array()){
+        return $list;    
     }
     /**
      * 统计总数
@@ -182,7 +216,7 @@ class MY_Model extends Model{
         //查询数据
         $findData = $this->getData($where);
         if ($findData){
-            $this->__setWhere($findData['id']);
+            $this->__setWhere($where);
             $this->__setLimit($limit);
             $this->db->update($this->table, $data);
             //更新父级金额
@@ -260,7 +294,7 @@ class MY_Model extends Model{
      * 更新父级金额
      * @param int $id
      */
-    function updateParentMoneys($id){
+    function updateParentMoneys($parentId){
     
     }
     /**
