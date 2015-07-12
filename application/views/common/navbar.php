@@ -41,7 +41,11 @@
   <?php if ($this->viewData['breadcrumb']) {?>
     <ol class="breadcrumb">
       <?php foreach ($this->viewData['breadcrumb'] as $k => $v) {?>
-      <li <?=$k+1==count($this->viewData['breadcrumb']) ? 'class="active"':''?>><a href="<?=$v['url']?$v['url']:'#'?>"><?=$v['title']?></a></li>
+        <?php if ($k+1 != count($this->viewData['breadcrumb'])) {?>
+        <li><a href="<?=$v['url']?$v['url']:'#'?>"><?=$v['title']?></a></li>
+        <?php }else{ ?>
+        <li class="active"><?=$v['title']?></li>
+        <?php }?>
       <?php } ?>
     </ol>
   <?php } ?>

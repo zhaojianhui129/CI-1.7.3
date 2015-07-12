@@ -11,7 +11,7 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "http://www.dongfeng.com/bc2015/";
+$config['base_url']	= "http://www.dflpvmkt.com.cn/bc2015_demo/";
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ $config['index_page'] = "index.php";
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= "QUERY_STRING";
+$config['uri_protocol']	= "AUTO";
 
 /*
 |--------------------------------------------------------------------------

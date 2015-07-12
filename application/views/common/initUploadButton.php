@@ -1,3 +1,4 @@
+<?php if($buttonIds){ ?>
 <script type="text/javascript">
 	KindEditor.ready(function(K) {
 		<?php foreach($buttonIds as $v){ ?>
@@ -7,10 +8,15 @@
 			url : '<?php echo $uploadUrl?>',
 			afterUpload : function(data) {
 				if (data.error === 0) {
-					var url = K.formatUrl(data.url, 'absolute');
-					K('#<?php echo $v;?>Url').val(url);
+					if ($("#<?=$v?>ImgBox").length > 0) {
+						var url = K.formatUrl(data.url, 'absolute');
+						var html = '<a target="_blank" href="'+url+'" class="thumbnail"><img class="carousel-inner img-responsive img-rounded" src="'+url+'"></a>';
+						$("#<?=$v?>ImgBox").html(html);
+					};
+					K('#<?=$v?>FileId').val(data.fileId);
+					layer.msg('文件上传成功', {icon: 1,time: 500});
 				} else {
-					layer.msg(data.message, {shift: 6,time: 1000});
+					layer.msg(data.message, {icon:4,shift: 6,time: 1000});
 				}
 			},
 			afterError : function(str) {
@@ -25,3 +31,4 @@
 		?>
 	});
 </script>
+<?php } ?>
