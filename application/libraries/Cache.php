@@ -56,7 +56,7 @@ class Cache{
         //缓存文件路径
         $filePath = $this->cachePath . $name . '.php';
         //文件存在并且在过期秒数内
-        if (file_exists($filePath) && time() - filemtime($filePath) < $this->expire){
+        if (file_exists($filePath) && time() - filemtime($filePath) > $this->expire){
             return require($filePath);
         }else{
             return false;
