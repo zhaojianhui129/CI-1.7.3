@@ -34,12 +34,12 @@ class Cache{
     function set($name, $value){
         //缓存文件路径
         $filePath = $this->cachePath . $name . '.php';
-        //创建并以写入方式打开
+        //若存在过期文件删除掉
         if (file_exists($filePath)){
-            $handle = fopen($filePath, 'w');
-        }else{
-            $handle = fopen($filePath, 'x');
+            unlink($filePath);
         }
+        //创建并以写入方式打开
+        $handle = fopen($filePath, 'x');
         //文件内容
         $content = "<?php \r\nreturn ". var_export($value, true) . ';';
         //写入文件
@@ -56,8 +56,8 @@ class Cache{
         //缓存文件路径
         $filePath = $this->cachePath . $name . '.php';
         //文件存在并且在过期秒数内
-        if (file_exists($filePath) && time() - filemtime($filePath) < $this->expire){
-            return require_once $filePath;
+        if (file_exists($filePath) && (time() - filemtime($filePath) <= $this->expire)){
+            return require($filePath);
         }else{
             return false;
         }

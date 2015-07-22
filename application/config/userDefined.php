@@ -17,8 +17,8 @@ $config['timeUnit'] = array(
 //角色名称
 $config['roleList'] = array(
     1=>'专营店',
-    2=>'小区督导',
-    3=>'大区总监',
+    2=>'督导',
+    3=>'总监',
     4=>'区域总监',
     5=>'总部',
     6=>'查看端'
@@ -32,6 +32,12 @@ $config['auditRs'] = array(
     3   => '返回修改',
     4   => '部分通过'
 );
+//预算审核下拉选项
+$config['budgetAuditOptions'] = array(1=>'通过',2=>'不通过');
+//结算审核下拉选项
+$config['settleAuditOptions'] = array(1=>'通过',2=>'不通过', 3=>'返回修改');
+//是否结算下拉选项
+$config['isSettleOptions'] = array(1=>'是', 0=>'否');
 //活动类型
 $config['projectEventType'] = array(1=>'店头', 2 => '户外');
 //活动分类
