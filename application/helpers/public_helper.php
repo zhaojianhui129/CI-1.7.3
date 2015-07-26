@@ -59,7 +59,7 @@ function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1
         $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
     }elseif ($status == 2){
         $msgTitle = '操作失败';
-        $jumpUrl = 'javascript:history.back(-1);';
+        $jumpUrl || $jumpUrl = 'javascript:history.back(-1);';
     }elseif ($status == 3){
         $msgTitle = '信息提示';
         $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
