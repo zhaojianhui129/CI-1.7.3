@@ -50,6 +50,7 @@ function ajaxFormat($statusCode = 1,$message = '',$data = array()){
  * @param string $jumpUrl
  */
 function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1, $paramData = array()){
+    require_once APPPATH.'libraries/JSON.php';
     $CI =& get_instance();
     $waitSecond || $waitSecond = 1;//默认跳转等待时间为1秒
     $msgTitle = '';
@@ -67,7 +68,8 @@ function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1
     
     if (isAjax()){//判断是否为异步请求
         $originData = array('waitSecond'=>$waitSecond,'jumpUrl'=>$jumpUrl);
-        echo json_encode(ajaxFormat($status, $message, array_merge($originData, $paramData)));
+        $json = new Services_JSON();
+        echo $json->encode(ajaxFormat($status, $message, array_merge($originData, $paramData)));
         exit();
     }else{
         $data = array(
