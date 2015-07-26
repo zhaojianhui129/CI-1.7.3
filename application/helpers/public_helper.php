@@ -51,15 +51,17 @@ function ajaxFormat($statusCode = 1,$message = '',$data = array()){
  */
 function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1, $paramData = array()){
     $CI =& get_instance();
-    $jumpUrl || $jumpUrl =  $CI->input->server('HTTP_REFERER');
     $waitSecond || $waitSecond = 1;//默认跳转等待时间为1秒
     $msgTitle = '';
     if ($status == 1){
         $msgTitle = '操作成功';
+        $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
     }elseif ($status == 2){
         $msgTitle = '操作失败';
+        $jumpUrl = 'javascript:history.back(-1);';
     }elseif ($status == 3){
         $msgTitle = '信息提示';
+        $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
     }
     $message || $message = $msgTitle;
     
