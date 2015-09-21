@@ -66,7 +66,7 @@ class MY_Model extends Model{
                 if (is_array($v) && count($v) >= 2 && in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn', 'like', 'orLike', 'notLike', 'orNotLike')) && is_array($v)){
                     if (in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn'))){
                         $v[1] = (array)$v[1];
-                        $v[1] || $v[1][] = 0;
+                        $v[1] || $v[1][] = NULL;
                     }
                     $v[0] == 'in' && $this->db->where_in($k, $v[1]);
                     $v[0] == 'orIn' && $this->db->or_where_in($k, $v[1]);
