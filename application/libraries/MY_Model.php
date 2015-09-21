@@ -66,7 +66,7 @@ class MY_Model extends Model{
                 if (is_array($v) && count($v) >= 2 && in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn', 'like', 'orLike', 'notLike', 'orNotLike')) && is_array($v)){
                     if (in_array($v[0], array('in', 'orIn', 'notIn', 'orNotIn'))){
                         $v[1] = (array)$v[1];
-                        $v[1][] = 0; 
+                        $v[1] || $v[1][] = 0;
                     }
                     $v[0] == 'in' && $this->db->where_in($k, $v[1]);
                     $v[0] == 'orIn' && $this->db->or_where_in($k, $v[1]);
@@ -119,8 +119,11 @@ class MY_Model extends Model{
      */
     function getNewData($where){
         $findData = $this->getData($where);
-        $data = $this->packing(array($findData));
-        return $data[0];
+        if ($findData){
+            $data = $this->packing(array($findData));
+            return $data[0];
+        }
+        return array();
     }
     /**
      * 获取指定条件的列表数据
@@ -160,7 +163,10 @@ class MY_Model extends Model{
      */
     function getNewList($where, $limit = NULL, $offset = NULL, $colum = '', $orderby = ''){
         $findList = $this->getList($where, $limit, $offset, $colum, $orderby);
-        return $this->packing($findList);
+        if ($findList){
+            return $this->packing($findList);
+        }
+        return array();
     }
     /**
      * 子类覆盖此方法，达到不同数据模型处理方式不一样
@@ -276,6 +282,7 @@ class MY_Model extends Model{
      * @return object
      */
     function setInc($where, $field, $step){
+        $this->__setWhere($where);
         $this->db->set($field, $field.'+'.$step, FALSE);
         return $this->db->update($this->table);
     }
@@ -287,8 +294,22 @@ class MY_Model extends Model{
      * @return object
      */
     function setDec($where, $field, $step){
+        $this->__setWhere($where);
         $this->db->set($field, $field.'-'.$step, FALSE);
         return $this->db->update($this->table);
+    }
+    /**
+     * 获取指定条件指定字段总数
+     * @param  mix $where
+     * @param string $field
+     * @return number
+     */
+    function getSum($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_sum($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
     }
     /**
      * 更新父级金额
