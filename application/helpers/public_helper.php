@@ -43,6 +43,32 @@ function ajaxFormat($statusCode = 1,$message = '',$data = array()){
     return $data;
 }
 /**
+ * 兼容的json_encode方法
+ * @param array $value
+ */
+function jsonEncode($value){
+    if (function_exists('json_encode')){
+        return json_encode($value);
+    }else{
+        require_once APPPATH.'libraries/JSON.php';
+        $json = new Services_JSON();
+        return $json->encode($value);
+    }
+}
+/**
+ * 兼容的json_decode方法
+ * @param string $jsonStr
+ */
+function jsonDecode($jsonStr){
+    if (function_exists('json_decode')){
+        return json_decode($jsonStr);
+    }else{
+        require_once APPPATH.'libraries/JSON.php';
+        $json = new Services_JSON();
+        return $json->decode($jsonStr);
+    }
+}
+/**
  * 页面跳转方法，基本方法，涵盖异步请求的判断
  * @param number $status
  * @param string $message
@@ -50,7 +76,6 @@ function ajaxFormat($statusCode = 1,$message = '',$data = array()){
  * @param string $jumpUrl
  */
 function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1, $paramData = array()){
-    require_once APPPATH.'libraries/JSON.php';
     $CI =& get_instance();
     $waitSecond || $waitSecond = 1;//默认跳转等待时间为1秒
     $msgTitle = '';
@@ -64,12 +89,12 @@ function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1
         $msgTitle = '信息提示';
         $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
     }
+    $paramData['jumpUrl'] = $jumpUrl;
     $message || $message = $msgTitle;
     
     if (isAjax()){//判断是否为异步请求
         $originData = array('waitSecond'=>$waitSecond,'jumpUrl'=>$jumpUrl);
-        $json = new Services_JSON();
-        echo $json->encode(ajaxFormat($status, $message, array_merge($originData, $paramData)));
+        echo jsonEncode(ajaxFormat($status, $message, array_merge($originData, $paramData)));
         exit();
     }else{
         $data = array(
@@ -147,7 +172,11 @@ function redirect($url){
 function printUrl($c, $m, $param = array()){
     $urlParam = array('c'=>$c, 'm'=>$m);
     $urlParam = array_merge($urlParam, $param);
-    return 'index.php?'.http_build_query($urlParam);
+    $arr = array();
+    foreach ($urlParam as $k=>$v){
+        $arr[] = $k.'='.$v;
+    }
+    return 'index.php?'.implode('&', $arr);
 }
 /**
  * 获取当前时间单元
@@ -251,4 +280,53 @@ function getArrayColumnTotal($arr,$column=array(),$deep=1){
         }
     }
     return $data;
+}
+/**
+ * 设置excel文件下载头
+ * @param [type] $fileName [description]
+ */
+function setExcelDownHeader($fileName){
+    $fileName = $fileName.'.xls';
+    header("Content-Type:application/vnd.ms-excel");
+    header("Pragma: public");
+    header("Expires:0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Content-Type: application/force-download");
+    header("Content-Type: application/octet-stream");
+    header("Content-Type: application/download");
+    //中文名乱码问题
+    $ua = $_SERVER["HTTP_USER_AGENT"];
+    //Trident内核（代表：Internet Explorer），Gecko内核（代表：Mozilla Firefox），WebKit内核（代表：Safari、Chrome），Presto内核（代表：Opera）
+    if (preg_match("/Trident|Edge/", $ua)) {//ie
+        $encoded_filename = urlencode($fileName);
+        $encoded_filename = str_replace("+", "%20", $encoded_filename);
+        header('Content-Disposition: attachment; filename="' . $encoded_filename . '"');
+    } else if (preg_match("/Firefox/", $ua)) {//火狐
+        header('Content-Disposition: attachment; filename*="utf8\'\'' . $fileName . '"');
+    } else {  
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+    }
+    header("Content-Transfer-Encoding: binary ");
+}
+/**
+ * 设置下载文件头
+ * @param [type] $finleName [description]
+ */
+function setFileDownHeader($finleName){
+    // 输入文件标签
+    Header("Content-type: ".$fileData['fileType']);
+    Header("Accept-Ranges: bytes");
+    Header("Accept-Length: ". filesize($fileData['fullPath']));
+    //中文名乱码问题
+    $ua = $_SERVER["HTTP_USER_AGENT"];
+    //Trident内核（代表：Internet Explorer），Gecko内核（代表：Mozilla Firefox），WebKit内核（代表：Safari、Chrome），Presto内核（代表：Opera）
+    if (preg_match("/Trident|Edge/", $ua)) {//ie
+        $encoded_filename = urlencode($fileName);
+        $encoded_filename = str_replace("+", "%20", $encoded_filename);
+        header('Content-Disposition: attachment; filename="' . $encoded_filename . '"');
+    } else if (preg_match("/Firefox/", $ua)) {//火狐
+        header('Content-Disposition: attachment; filename*="utf8\'\'' . $fileName . '"');
+    } else {  
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+    }
 }
