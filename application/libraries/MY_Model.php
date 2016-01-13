@@ -52,8 +52,8 @@ class MY_Model extends Model{
      *              $where[] = array('id'=>$id);
      *              $where[] = array('date >' => $date);
      *              $where[] = array('type !=' => $type);
-     *              $where[] = array('id', array('in', array(1,2,3,4,5)) );
-     *              $where[] = array('title', array('like', '搜索标题', 'before'));
+     *              $where[] = array('id' => array('in', array(1,2,3,4,5)) );
+     *              $where[] = array('title' => array('like', '搜索标题', 'before'));
      * 三种条件只能使用一种方式，个人建议使用数组形式，在列表查询时用数组更加灵活限制查询条件
      * @param array|string $where
      */
@@ -226,13 +226,17 @@ class MY_Model extends Model{
         if ($findData){
             $this->__setWhere($where);
             $this->__setLimit($limit);
-            $this->db->update($this->table, $data);
+            $up = $this->db->update($this->table, $data);
             //更新父级金额
             $parentId = $this->getParentId($findData);
             if ($parentId){
                 $this->updateParentMoneys($parentId);
             }
-            return $findData['id'];
+            if ($up){
+                return $findData['id'] ? (int)$findData['id'] : true; 
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -246,8 +250,12 @@ class MY_Model extends Model{
     function upset($where = array(),$data = array()){
         $findData = $this->getData($where);
         if ($findData){
-            $this->db->update($this->table, $data, $where, 1);
-            return $findData['id'];
+            $up = $this->db->update($this->table, $data, $where, 1);
+            if ($up){
+                return $findData['id'] ? $findData['id'] : true;
+            }else{
+                return false;
+            }
         }else{
             $this->db->insert($this->table, array_merge($where, $data));
             $insertId= $this->db->insert_id();
