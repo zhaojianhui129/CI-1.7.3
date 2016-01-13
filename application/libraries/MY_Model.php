@@ -309,6 +309,45 @@ class MY_Model extends Model{
         return $this->db->update($this->table);
     }
     /**
+     * 获取指定条件指定字段的最大值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getMax($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_max($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
+    }
+    /**
+     * 获取指定条件指定字段的最小值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getMin($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_min($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
+    }
+    /**
+     * 获取指定条件指定字段的平均值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getAvg($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_avg($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
+    }
+    /**
      * 获取指定条件指定字段总数
      * @param  mix $where
      * @param string $field
