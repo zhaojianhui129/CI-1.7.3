@@ -32,8 +32,10 @@
  */
 class MY_Model extends Model{
     var $table = '';//表名
+    var $CI = NULL;//当前CI框架
     function MY_Model(){
         parent::Model();
+        $this->CI =& get_instance();
     }
     /**
      * 优化默认的where条件语句
@@ -50,8 +52,8 @@ class MY_Model extends Model{
      *              $where[] = array('id'=>$id);
      *              $where[] = array('date >' => $date);
      *              $where[] = array('type !=' => $type);
-     *              $where[] = array('id', array('in', array(1,2,3,4,5)) );
-     *              $where[] = array('title', array('like', '搜索标题', 'before'));
+     *              $where[] = array('id' => array('in', array(1,2,3,4,5)) );
+     *              $where[] = array('title' => array('like', '搜索标题', 'before'));
      * 三种条件只能使用一种方式，个人建议使用数组形式，在列表查询时用数组更加灵活限制查询条件
      * @param array|string $where
      */
@@ -224,13 +226,17 @@ class MY_Model extends Model{
         if ($findData){
             $this->__setWhere($where);
             $this->__setLimit($limit);
-            $this->db->update($this->table, $data);
+            $up = $this->db->update($this->table, $data);
             //更新父级金额
             $parentId = $this->getParentId($findData);
             if ($parentId){
                 $this->updateParentMoneys($parentId);
             }
-            return $findData['id'];
+            if ($up){
+                return $findData['id'] ? (int)$findData['id'] : true; 
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -244,8 +250,12 @@ class MY_Model extends Model{
     function upset($where = array(),$data = array()){
         $findData = $this->getData($where);
         if ($findData){
-            $this->db->update($this->table, $data, $where, 1);
-            return $findData['id'];
+            $up = $this->db->update($this->table, $data, $where, 1);
+            if ($up){
+                return $findData['id'] ? $findData['id'] : true;
+            }else{
+                return false;
+            }
         }else{
             $this->db->insert($this->table, array_merge($where, $data));
             $insertId= $this->db->insert_id();
@@ -297,6 +307,45 @@ class MY_Model extends Model{
         $this->__setWhere($where);
         $this->db->set($field, $field.'-'.$step, FALSE);
         return $this->db->update($this->table);
+    }
+    /**
+     * 获取指定条件指定字段的最大值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getMax($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_max($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
+    }
+    /**
+     * 获取指定条件指定字段的最小值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getMin($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_min($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
+    }
+    /**
+     * 获取指定条件指定字段的平均值
+     * @param mix $where
+     * @param string $field
+     * @return number
+     */
+    function getAvg($where, $field){
+        $this->__setWhere($where);
+        $this->db->select_avg($field);
+        $query = $this->db->get($this->table, 1);
+        $row = $query ->row_array();
+        return (int)$row[$field];
     }
     /**
      * 获取指定条件指定字段总数
