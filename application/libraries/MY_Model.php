@@ -35,7 +35,6 @@ class MY_Model extends Model{
     var $CI = NULL;//当前CI框架
     function MY_Model(){
         parent::Model();
-        $this->CI =& get_instance();
     }
     /**
      * 优化默认的where条件语句

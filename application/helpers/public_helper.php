@@ -59,14 +59,30 @@ function jsonEncode($value){
  * 兼容的json_decode方法
  * @param string $jsonStr
  */
-function jsonDecode($jsonStr){
-    if (function_exists('json_decode')){
-        return json_decode($jsonStr);
-    }else{
+function jsonDecode($jsonStr, $toArray = true){
+    /* if (function_exists('json_decode')){
+        return json_decode($jsonStr, $toArray);
+    }else{ */
         require_once APPPATH.'libraries/JSON.php';
         $json = new Services_JSON();
-        return $json->decode($jsonStr);
+        $value = $json->decode($jsonStr);
+        if ($toArray){
+            $value = toArray($value);
+        }
+        return $value;
+    //}
+}
+/**
+ * 递归转换为数组
+ */
+function toArray($obj){
+    $value = (array)$obj;
+    foreach($value as $k => $v){
+        if (is_object($v)){
+            $value[$k] = toArray($v);
+        }
     }
+    return $value;
 }
 /**
  * 页面跳转方法，基本方法，涵盖异步请求的判断
@@ -84,7 +100,7 @@ function dispatchJump($status = 1, $message = '', $jumpUrl = '', $waitSecond = 1
         $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
     }elseif ($status == 2){
         $msgTitle = '操作失败';
-        $jumpUrl || $jumpUrl = 'javascript:history.back(-1);';
+        $jumpUrl || $jumpUrl = $_SERVER['HTTP_REFERER'];
     }elseif ($status == 3){
         $msgTitle = '信息提示';
         $jumpUrl || $jumpUrl =  $_SERVER['HTTP_REFERER'];
@@ -312,11 +328,11 @@ function setExcelDownHeader($fileName){
  * 设置下载文件头
  * @param [type] $finleName [description]
  */
-function setFileDownHeader($finleName){
+function setFileDownHeader($fileName, $filePath, $fileType){
     // 输入文件标签
-    Header("Content-type: ".$fileData['fileType']);
+    Header("Content-type: ".$fileType);
     Header("Accept-Ranges: bytes");
-    Header("Accept-Length: ". filesize($fileData['fullPath']));
+    Header("Accept-Length: ". filesize($filePath));
     //中文名乱码问题
     $ua = $_SERVER["HTTP_USER_AGENT"];
     //Trident内核（代表：Internet Explorer），Gecko内核（代表：Mozilla Firefox），WebKit内核（代表：Safari、Chrome），Presto内核（代表：Opera）
