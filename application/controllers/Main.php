@@ -12,6 +12,12 @@ class main extends MY_Controller{
         //echo $this->input->server('HTTP_REFERER');
         $this->load->view("Main/index");
     }
+    /**
+     * 上传
+     */
+    function upload(){
+        $this->load->view('Main/upload');
+    }
     function ajax(){
         $this->success("错误");
     }
