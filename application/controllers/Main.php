@@ -9,7 +9,7 @@ class main extends MY_Controller{
         parent::MY_Controller();
     }
     function index(){
-        //echo $this->input->server('HTTP_REFERER');
+        echo $this->input->server('HTTP_REFERER');
         $this->load->view("Main/index");
     }
     /**

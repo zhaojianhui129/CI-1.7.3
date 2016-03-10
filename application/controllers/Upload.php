@@ -100,7 +100,7 @@ class Upload extends MY_Controller{
      * 百度上传控制
      */
     function ueditor(){
-        $CONFIG = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(SELF . "/../public/ueditor/php/config.json")), true);
+        $CONFIG = jsonDecode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(SELF . "/../public/ueditor/php/config.json")), true);
         $action = $_GET['action'];
         
         switch ($action) {
