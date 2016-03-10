@@ -94,6 +94,7 @@ else
 | APPPATH	- The full server path to the "application" folder
 |
 */
+define('ENV', 'develop');
 define('EXT', '.php');
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 define('FCPATH', str_replace(SELF, '', __FILE__));
