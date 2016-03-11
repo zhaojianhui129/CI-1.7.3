@@ -154,7 +154,7 @@ class Upload extends MY_Controller{
                 case 'listimage':
                     //$result = include(FCPATH . "/../public/ueditor/php/action_list.php");
                     $this->load->model('fileModel');
-                    $fileList = $this->fileModel->getList(array('userId'=>$this->user['userId'],'dir'=>'image'));
+                    $fileList = $this->fileModel->getList(array('userId'=>(int)$this->user['userId'],'dir'=>'image'));
                     $result = array(
                         'state' => 'SUCCESS',
                         'start' => 0,
@@ -174,7 +174,7 @@ class Upload extends MY_Controller{
                 case 'listfile':
                     //$result = include(FCPATH . "/../public/ueditor/php/action_list.php");
                     $this->load->model('fileModel');
-                    $fileList = $this->fileModel->getList(array('userId'=>$this->user['userId'],'dir'=>'file'));
+                    $fileList = $this->fileModel->getList(array('userId'=>(int)$this->user['userId'],'dir'=>'file'));
                     $result = array(
                         'state' => 'SUCCESS',
                         'start' => 0,
