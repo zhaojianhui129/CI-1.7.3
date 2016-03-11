@@ -13,6 +13,13 @@ class Upload extends MY_Controller{
      * 文件上传保存
      */
     function uploadSave(){
+        //验证用户登录状态
+        $this->load->library('User', null, 'userLib');
+        $this->user = $this->userLib->getUserInfo();
+        if (! $this->user){
+            $error = $this->userLib->error;
+            exit(json_encode(array('error'=>1, 'message'=> $error)));
+        }
         $extPath = date('Ymd');//子目录
         //file_name此参数不设置后缀才怪，中文文档又坑爹了
         //$config['file_name'] = (float)microtime(true)*10000 . '.jpg';
@@ -100,52 +107,125 @@ class Upload extends MY_Controller{
      * 百度上传控制
      */
     function ueditor(){
-        $CONFIG = jsonDecode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(SELF . "/../public/ueditor/php/config.json")), true);
-        $action = $_GET['action'];
-        
-        switch ($action) {
-            case 'config':
-                $result =  json_encode($CONFIG);
-                break;
-        
-            /* 上传图片 */
-            case 'uploadimage':
-            /* 上传涂鸦 */
-            case 'uploadscrawl':
-            /* 上传视频 */
-            case 'uploadvideo':
-            /* 上传文件 */
-            case 'uploadfile':
-                $result = include("action_upload.php");
-                break;
-        
-            /* 列出图片 */
-            case 'listimage':
-                $result = include("action_list.php");
-                break;
-            /* 列出文件 */
-            case 'listfile':
-                $result = include("action_list.php");
-                break;
-        
-            /* 抓取远程文件 */
-            case 'catchimage':
-                $result = include("action_crawler.php");
-                break;
-        
-            default:
-                $result = json_encode(array(
-                    'state'=> '请求地址出错'
-                ));
-                break;
-        }
+        //验证用户登录状态
+        $this->load->library('User', null, 'userLib');
+        $this->user = $this->userLib->getUserInfo();
+        /* if (! $this->user){
+            $result = jsonEncode(array(
+                'state'=> $this->userLib->error
+            ));
+        }else{ */
+            $CONFIG = jsonDecode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(FCPATH . "/../public/ueditor/php/config.json")), true);
+            $action = $_GET['action'];
+            
+            switch ($action) {
+                case 'config':
+                    $result =  jsonEncode($CONFIG);
+                    break;
+            
+                /* 上传图片 */
+                case 'uploadimage':
+                /* 上传涂鸦 */
+                case 'uploadscrawl':
+                /* 上传视频 */
+                case 'uploadvideo':
+                /* 上传文件 */
+                case 'uploadfile':
+                    $uploadInfo = include(FCPATH . "/../public/ueditor/php/action_upload.php");
+                    $resultArr = jsonDecode($uploadInfo);
+                    $this->load->model('fileModel');
+                    $fileData = array(
+                        'dir'      => str_replace('upload', '', $action),
+                        'fileName' => $resultArr['title'],
+                        'fileType' => $resultArr['type'],
+                        'fileSize' => $resultArr['size'],
+                        'origName' => $resultArr['original'],
+                        'viewPath' => $resultArr['url'],
+                        'fullPath' => $resultArr['filePath'],
+                        'userId' => (int)$this->user['userId'],
+                        'createTime' => time(),
+                    );
+                    $fileId = $this->fileModel->add($fileData);
+                    $resultArr['fileId'] = $fileId;
+                    $result = jsonEncode($resultArr);
+                    break;
+            
+                /* 列出图片 */
+                case 'listimage':
+                    //$result = include(FCPATH . "/../public/ueditor/php/action_list.php");
+                    $this->load->model('fileModel');
+                    $fileList = $this->fileModel->getList(array('userId'=>$this->user['userId'],'dir'=>'image'));
+                    $result = array(
+                        'state' => 'SUCCESS',
+                        'start' => 0,
+                        'total' => count($fileList),
+                        'list' => array(),
+                    );
+                    foreach ($fileList as $v){
+                        $result['list'][] = array(
+                            'fileId' => (int)$v['id'],
+                            'url' => $v['viewPath'],
+                            'mtime' => (int)$v['createTime'],
+                        );
+                    }
+                    $result = jsonEncode($result);
+                    break;
+                /* 列出文件 */
+                case 'listfile':
+                    //$result = include(FCPATH . "/../public/ueditor/php/action_list.php");
+                    $this->load->model('fileModel');
+                    $fileList = $this->fileModel->getList(array('userId'=>$this->user['userId'],'dir'=>'file'));
+                    $result = array(
+                        'state' => 'SUCCESS',
+                        'start' => 0,
+                        'total' => count($fileList),
+                        'list' => array(),
+                    );
+                    foreach ($fileList as $v){
+                        $result['list'][] = array(
+                            'fileId' => (int)$v['id'],
+                            'url' => $v['viewPath'],
+                            'mtime' => (int)$v['createTime'],
+                        );
+                    }
+                    $result = jsonEncode($result);
+                    break;
+            
+                /* 抓取远程文件 */
+                case 'catchimage':
+                    $uploadInfo = include(FCPATH . "/../public/ueditor/php/action_crawler.php");
+                    $resultArr = jsonDecode($uploadInfo);
+                    $this->load->model('fileModel');
+                    $fileData = array(
+                        'dir'      => str_replace('upload', '', $action),
+                        'fileName' => $resultArr['title'],
+                        'fileType' => $resultArr['type'],
+                        'fileSize' => $resultArr['size'],
+                        'origName' => $resultArr['original'],
+                        'viewPath' => $resultArr['url'],
+                        'fullPath' => $resultArr['filePath'],
+                        'userId' => (int)$this->user['userId'],
+                        'createTime' => time(),
+                    );
+                    $fileId = $this->fileModel->add($fileData);
+                    $resultArr['fileId'] = $fileId;
+                    $result = jsonEncode($resultArr);
+                    break;
+            
+                default:
+                    $result = json_encode(array(
+                        'state'=> '请求地址出错'
+                    ));
+                    break;
+            }
+        /* } */
         
         /* 输出结果 */
         if (isset($_GET["callback"])) {
             if (preg_match("/^[\w_]+$/", $_GET["callback"])) {
                 echo htmlspecialchars($_GET["callback"]) . '(' . $result . ')';
             } else {
-                echo json_encode(array(
+                echo jsonEncode(array(
                     'state'=> 'callback参数不合法'
                 ));
             }

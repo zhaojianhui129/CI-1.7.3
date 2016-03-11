@@ -30,7 +30,7 @@
 <script type="text/javascript">
     //重新实例化一个编辑器，防止在上面的editor编辑器中显示上传的图片或者文件
     var _editor = UE.getEditor('upload_ue',{
-        serverUrl:'',
+        serverUrl:'<?=$this->config->item('base_url')?><?=printUrl('Upload','ueditor')?>',
         isShow:false,
     });
     _editor.ready(function () {

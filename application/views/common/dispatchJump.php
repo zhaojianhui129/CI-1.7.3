@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title><?php echo $msgTitle;?></title>
-<link rel="stylesheet" type="text/css" href="public/css/operatetip.css" />
+<link rel="stylesheet" type="text/css" href="/public/css/operatetip.css" />
 <meta http-equiv='Refresh' content='<?php echo $waitSecond;?>;URL=<?php echo $jumpUrl;?>'>
 </head>
 

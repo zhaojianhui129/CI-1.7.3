@@ -40,6 +40,7 @@ class User{
         'userRole'  => 0,//用户角色
         'userLimit' => array(),//用户权限
     );
+    var $error = '';
     //用户模型
     var $sellpointModel = null;
     //用户基本
@@ -57,7 +58,8 @@ class User{
         //判断是否退出
         if (!isset($_SESSION['DLRID']) || $_SESSION['DLRNAME'] == "")
         {
-            showError('您还未登录', '/homepage.php');
+            $this->error = '您还未登录';
+            $this->user = array();
             return false;
         }
         $this->user['userId']      = $CI->session->userdata('userId');
@@ -70,14 +72,16 @@ class User{
             $password = $_COOKIE['lPassword'];
             $storeData = $this->sellpointModel->getNewData(array('Account'=>$username));
             if (!$storeData || $storeData['password'] != $password){
-                showError('用户信息错误', '/homepage.php');
+                $this->error = '用户信息错误';
+                $this->user = array();
                 return false;
             }
             //查询权限设置信息表
             $CI->load->model('jurSellpointModel', 'authModel');
             $authList = $CI->authModel->getList(array('SellPointID'=>$storeData['userId'], 'application_system_id'=>array('in', array(59,60))));
             if (!$authList){
-                showError('您无权限进入此模块','/homepage.php');
+                $this->error = '您无权限进入此模块';
+                $this->user = array();
                 return false;
             }
             $this->user['userLimit'] = array();
@@ -121,7 +125,8 @@ class User{
             }
             //专营店判断是否为营销网专营店，过滤启程专营店
             if ($this->user['userRole'] == $this->roleSellpoint && $storeData['SpState_sys']){
-                showError('您非nissan专营店，不能进入此模块', '/homepage.php');
+                $this->error = '您非nissan专营店，不能进入此模块';
+                $this->user = array();
                 return false;
             }
             if ($this->user['userRole']){

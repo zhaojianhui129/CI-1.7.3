@@ -123,10 +123,10 @@ class MY_Controller extends Controller
     function MY_Controller()
     {
         parent::Controller();
-        $this->load->library('User', null, 'userLib');
+        /* $this->load->library('User', null, 'userLib');
         $this->user = $this->userLib->getUserInfo();
         if (! $this->user){
-            showError('您无权限登陆此系统');
+            showError($this->userLib->error);
         }
         //加载菜单，全局使用
         $this->load->library('Navbar', $this->user);
@@ -134,7 +134,7 @@ class MY_Controller extends Controller
         //当前选中菜单默认为当前控制器
         $this->navbarFocus = $this->input->get('c');
         //加载认证类，全局可以调用
-        $this->load->library('Auth', $this->user);
+        $this->load->library('Auth', $this->user); */
         //面包屑导航
         $this->viewData['breadcrumb'][] = array('url'=>printUrl('Main', 'index'),'title'=>'首页');
     }
