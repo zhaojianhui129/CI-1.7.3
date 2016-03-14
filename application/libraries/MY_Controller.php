@@ -126,7 +126,7 @@ class MY_Controller extends Controller
         /* $this->load->library('User', null, 'userLib');
         $this->user = $this->userLib->getUserInfo();
         if (! $this->user){
-            showError($this->userLib->error);
+            showError($this->userLib->error, '/');
         }
         //加载菜单，全局使用
         $this->load->library('Navbar', $this->user);
