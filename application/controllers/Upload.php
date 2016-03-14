@@ -81,6 +81,63 @@ class Upload extends MY_Controller{
         }
     }
     /**
+     * 上传文件浏览
+     */
+    function uploadManager(){
+        $where = array();
+        $where['userId'] = $this->user['userId'];
+        //浏览类别
+        $dir = $this->input->get('dir');
+        if (!in_array($dir, array('', 'image', 'flash', 'media', 'file'))) {
+            echo "Invalid Directory name.";
+        }
+        $where['dir'] = $dir;
+        //排序形式，name or size or type
+        $order = strtolower($this->input->get('order'));
+        $orderStr = '';
+        switch ($order){
+            case 'name':
+                $orderStr = 'fileName desc';
+                break;
+            case 'size':
+                $orderStr = 'fileSize desc';
+                break;
+            case '':
+                $orderStr = 'fileType desc';
+                break;
+        }
+        $this->load->model('fileModel');
+        $findList = $this->fileModel->getList($where, null, null, '', $orderStr);
+        $fileList = array();
+        foreach ($findList as $v){
+            $file_ext = strtolower(pathinfo($v['fullPath'], PATHINFO_EXTENSION));
+            $fileList[] = array(
+                'is_dir'        => false,//是否文件夹
+                'has_file'      => false,//文件夹是否包含文件
+                'filesize'      => $v['fileSize'],//文件大小
+                'dir_path'      => '',
+                'is_photo'      => $v['dir'] == 'image' ? true : false,//是否图片
+                'filetype'      => $file_ext,//文件类别，用扩展名判断
+                'filename'      => $v['viewPath'],//文件名，包含扩展名
+                'datetime'      => date('Y-m-d H:i:s', $v['createTime']),//文件最后修改时间
+            );
+        }
+    
+        $result = array();
+        //相对于根目录的上一级目录
+        $result['moveup_dir_path'] = '';
+        //相对于根目录的当前目录
+        $result['current_dir_path'] = '';
+        //当前目录的URL
+        $result['current_url'] = '';
+        //文件数
+        $result['total_count'] = count($fileList);
+        //文件列表数组
+        $result['file_list'] = $fileList;
+    
+        echo jsonEncode($result);
+    }
+    /**
      * 上传附件下载
      */
     function download(){
