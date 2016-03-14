@@ -23,8 +23,10 @@
 </head>
 <body>
 <a href="javascript:void(0);" id="upImages">上传多图</a>
+<a href="javascript:void(0);" id="upScrawl">上传涂鸦</a>
 <a href="javascript:void(0);" id="upFiles">上传文件</a>
 <input name="picture" id="picture" value="">
+<input name="file" id="file" value="">
 <img id="preview" src="">
     <!-- 放置编辑器 -->
     <script type="text/plain" id="myEditor"></script>
@@ -53,12 +55,17 @@
         //侦听文件上传
         _editor.addListener('afterUpfile', function (t, arg) {
             console.log(arg[0]);
-            //$("#file").attr("value", _editor.options.filePath + arg[0].url);
+            $("#file").attr("value", arg[0].url);
         })
     });
     //弹出文件上传的对话框
     $("#upImages").click(function(){
         var myImage = _editor.getDialog("insertimage");
+        myImage.open();
+    });
+    //涂鸦图片上传
+    $("#upScrawl").click(function(){
+        var myImage = _editor.getDialog("scrawl");
         myImage.open();
     });
     //弹出文件上传的对话框

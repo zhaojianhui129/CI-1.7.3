@@ -59,6 +59,18 @@ function initUeditorImages($container){
     echo $content;
 }
 /**
+ * 初始化百度图片涂鸦
+ * @param unknown $container
+ */
+function initUeditorScrawl($container){
+    $data = array(
+        'container' => $container,
+    );
+    $loader = new CI_Loader();
+    $content = $loader->view('common/initUeditorScrawl',$data, true);
+    echo $content;
+}
+/**
  * 初始化百度附件上传控件
  * @param string $container
  */
