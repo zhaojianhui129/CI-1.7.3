@@ -33,3 +33,40 @@ function initUploadImage($buttonIds = array(),$uploadUrl = '',$secType = 'local'
     $content = $loader->view('common/initUploadImage',$data, true);
     echo $content;
 }
+/**
+ * 初始化百度编辑器
+ * @param string $boxId
+ */
+function initUeditor($container,$content=''){
+    $data = array(
+        'container' => $container,
+        'content' => $content,
+    );
+    $loader = new CI_Loader();
+    $content = $loader->view('common/initUeditor',$data, true);
+    echo $content;
+}
+/**
+ * 初始化百度图片上传控件
+ * @param string $container
+ */
+function initUeditorImages($container){
+    $data = array(
+        'container' => $container,
+    );
+    $loader = new CI_Loader();
+    $content = $loader->view('common/initUeditorImages',$data, true);
+    echo $content;
+}
+/**
+ * 初始化百度附件上传控件
+ * @param string $container
+ */
+function initUeditorFiles($container){
+    $data = array(
+        'container' => $container,
+    );
+    $loader = new CI_Loader();
+    $content = $loader->view('common/initUeditorFiles',$data, true);
+    echo $content;
+}
