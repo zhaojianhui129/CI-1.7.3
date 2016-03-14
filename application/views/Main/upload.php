@@ -30,8 +30,11 @@
 <script type="text/javascript">
     //重新实例化一个编辑器，防止在上面的editor编辑器中显示上传的图片或者文件
     var _editor = UE.getEditor('upload_ue',{
-        serverUrl:'<?=$this->config->item('base_url')?><?=printUrl('Upload','ueditor')?>',
+        serverUrl:'<?=DIRNAME?><?=printUrl('Upload','ueditor')?>',
         isShow:false,
+        toolbars:[['simpleupload','scrawl','insertimage','attachment']],
+        initialFrameHeight:1,
+        initialFrameWidth:1,
     });
     _editor.ready(function () {
         //设置编辑器不可用

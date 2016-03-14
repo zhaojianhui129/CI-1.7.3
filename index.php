@@ -94,12 +94,19 @@ else
 | APPPATH	- The full server path to the "application" folder
 |
 */
+//当前环境
 define('ENV', 'develop');
+//当前项目目录
+define('DIRNAME', pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME) . '/');
+//扩展名
 define('EXT', '.php');
+//文件名
 define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+//项目绝对目录
 define('FCPATH', str_replace(SELF, '', __FILE__));
+//框架目录
 define('BASEPATH', $system_folder.'/');
-
+//应用目录
 if (is_dir($application_folder))
 {
 	define('APPPATH', $application_folder.'/');
@@ -113,7 +120,6 @@ else
 
 	define('APPPATH', BASEPATH.$application_folder.'/');
 }
-
 /*
 |---------------------------------------------------------------
 | LOAD THE FRONT CONTROLLER

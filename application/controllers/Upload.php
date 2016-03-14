@@ -110,11 +110,11 @@ class Upload extends MY_Controller{
         //验证用户登录状态
         $this->load->library('User', null, 'userLib');
         $this->user = $this->userLib->getUserInfo();
-        if (! $this->user){
+        /* if (! $this->user){
             $result = jsonEncode(array(
                 'state'=> $this->userLib->error
             ));
-        }else{
+        }else{ */
             $CONFIG = jsonDecode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(FCPATH . "/../public/ueditor/php/config.json")), true);
             $action = $_GET['action'];
             
@@ -218,7 +218,7 @@ class Upload extends MY_Controller{
                     ));
                     break;
             }
-        }
+        /* } */
         
         /* 输出结果 */
         if (isset($_GET["callback"])) {
