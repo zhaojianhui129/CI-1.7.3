@@ -41,6 +41,10 @@
     <link rel="stylesheet" type="text/css" href="/public/kindeditor/themes/default/default.css"/>
     <script src="/public/kindeditor/kindeditor-all-min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/public/kindeditor/lang/zh_CN.js" type="text/javascript" charset="utf-8"></script>
+    <!-- 先配置UEditor -->
+    <script type="text/javascript" charset="utf-8" src="/public/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/public/ueditor/ueditor.all.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="/public/ueditor/lang/zh-cn/zh-cn.js"></script>
     <!--公用js方法-->
     <script src="/public/js/common.js" type="text/javascript" charset="utf-8"></script>
     <!--自定义公用js方法-->
