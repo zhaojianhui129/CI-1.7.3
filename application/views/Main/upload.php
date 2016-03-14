@@ -13,7 +13,6 @@
     <script type="text/javascript" charset="utf-8" src="/public/ueditor/lang/zh-cn/zh-cn.js"></script>
     <!-- 加载jquery库 -->
     <script type="text/javascript" charset="utf-8" src="/public/js/jquery-1.11.3.min.js"></script>
-
     <script type="text/javascript">
     /*var editor = UE.getEditor('myEditor', {
         isShow:false,
@@ -23,8 +22,8 @@
 </script>
 </head>
 <body>
-<a href="javascript:void(0);" onclick="upImage();">上传多图</a>
-<a href="javascript:void(0);" onclick="upFiles();">上传文件</a>
+<a href="javascript:void(0);" id="upImages">上传多图</a>
+<a href="javascript:void(0);" id="upFiles">上传文件</a>
 <input name="picture" id="picture" value="">
 <img id="preview" src="">
     <!-- 放置编辑器 -->
@@ -53,18 +52,19 @@
         })
         //侦听文件上传
         _editor.addListener('afterUpfile', function (t, arg) {
-            $("#file").attr("value", _editor.options.filePath + arg[0].url);
+            console.log(arg[0]);
+            //$("#file").attr("value", _editor.options.filePath + arg[0].url);
         })
     });
-    //弹出多图图片上传的对话框
-    function upImage() {
+    //弹出文件上传的对话框
+    $("#upImages").click(function(){
         var myImage = _editor.getDialog("insertimage");
         myImage.open();
-    }
+    });
     //弹出文件上传的对话框
-    function upFiles() {
+    $("#upFiles").click(function(){
         var myFiles = _editor.getDialog("attachment");
         myFiles.open();
-    }
+    });
 </script>
 </html>
