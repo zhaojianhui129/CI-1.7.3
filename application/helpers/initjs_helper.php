@@ -6,6 +6,7 @@
  * @param string $fieldName 文件域名称
  */
 function initUploadButtons($buttonIds = array(),$uploadUrl='',$fieldName = 'imgFile'){
+    $uploadUrl || $uploadUrl = printUrl('Upload','uploadSave',array('dir'=>'settleFile'));
     $data = array(
         'buttonIds' => $buttonIds,
         'uploadUrl' => $uploadUrl,
@@ -23,6 +24,8 @@ function initUploadButtons($buttonIds = array(),$uploadUrl='',$fieldName = 'imgF
  * @param string $managerUrl 远程图片列表地址(远程图片列表json格式，具体格式参考模板文件)
  */
 function initUploadImage($buttonIds = array(),$uploadUrl = '',$secType = 'local',$managerUrl = ''){
+    $uploadUrl || $uploadUrl = printUrl('Upload','uploadSave',array('dir'=>'image'));
+    $managerUrl || $managerUrl = printUrl('Upload','uploadManager',array('dir'=>'image'));
     $data = array(
         'buttonIds' => $buttonIds,
         'uploadUrl' => $uploadUrl,
@@ -31,6 +34,24 @@ function initUploadImage($buttonIds = array(),$uploadUrl = '',$secType = 'local'
     );
     $loader = new CI_Loader();
     $content = $loader->view('common/initUploadImage',$data, true);
+    echo $content;
+}
+/**
+ * 批量上传按钮
+ * @param array $buttonIds
+ * @param string $uploadUrl
+ * @param string $managerUrl
+ */
+function initUploadMultiImage($buttonIds = array(), $uploadUrl = '',$managerUrl = ''){
+    $uploadUrl || $uploadUrl = printUrl('Upload','uploadSave',array('dir'=>'image'));
+    $managerUrl || $managerUrl = printUrl('Upload','uploadManager',array('dir'=>'image'));
+    $data = array(
+        'buttonIds' => $buttonIds,
+        'uploadUrl' => $uploadUrl,
+        'managerUrl' => $managerUrl
+    );
+    $loader = new CI_Loader();
+    $content = $loader->view('common/initUploadMultiImage',$data, true);
     echo $content;
 }
 /**

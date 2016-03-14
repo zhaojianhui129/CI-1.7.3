@@ -24,11 +24,20 @@ class fileModel extends MY_Model{
      * @return array
      */
     function getFileDataByViewPaths($urls = array()){
-        $findList = $this->getData(array('viewPath'=>array('in',$urls)));
+        $findList = $this->getList(array('viewPath'=>array('in', $urls)));
         $list = array();
         foreach ((array)$findList as $v){
             $list[$v['viewPath']] = $v;
         }
-        return $list;
+        $newList = array();
+        //将网络图片合并到数据结果集中
+        foreach ($urls as $v){
+            if(isset($list[$v])){
+                $newList[$v] = $list[$v];
+            }else{
+                $newList[$v] = array('viewPath'=>$v);
+            }
+        }
+        return $newList;
     }
 }

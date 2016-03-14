@@ -12,7 +12,7 @@
         //隐藏编辑器，因为不会用到这个编辑器实例，所以要隐藏
         //_editor.hide();
         //侦听图片上传
-        _editor.addListener('beforeInsertImage', function (t, arg) {
+        <?=$container?>_editor.addListener('beforeInsertImage', function (t, arg) {
             console.log(arg[0]);
             //将地址赋值给相应的input
             $("#<?=$container?>picture").attr("value", arg[0].src);

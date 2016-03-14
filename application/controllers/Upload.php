@@ -84,6 +84,13 @@ class Upload extends MY_Controller{
      * 上传文件浏览
      */
     function uploadManager(){
+        //验证用户登录状态
+        $this->load->library('User', null, 'userLib');
+        $this->user = $this->userLib->getUserInfo();
+        if (! $this->user){
+            $error = $this->userLib->error;
+            exit(json_encode(array('error'=>1, 'message'=> $error)));
+        }
         $where = array();
         $where['userId'] = $this->user['userId'];
         //浏览类别
@@ -167,11 +174,11 @@ class Upload extends MY_Controller{
         //验证用户登录状态
         $this->load->library('User', null, 'userLib');
         $this->user = $this->userLib->getUserInfo();
-        /* if (! $this->user){
+        if (! $this->user){
             $result = jsonEncode(array(
                 'state'=> $this->userLib->error
             ));
-        }else{ */
+        }else{
             $CONFIG = jsonDecode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents(FCPATH . "/../public/ueditor/php/config.json")), true);
             $action = $_GET['action'];
             
@@ -275,7 +282,7 @@ class Upload extends MY_Controller{
                     ));
                     break;
             }
-        /* } */
+        }
         
         /* 输出结果 */
         if (isset($_GET["callback"])) {
