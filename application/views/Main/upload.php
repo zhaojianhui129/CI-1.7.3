@@ -11,6 +11,8 @@
     <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
     <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
     <script type="text/javascript" charset="utf-8" src="/public/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <!-- 加载jquery库 -->
+    <script type="text/javascript" charset="utf-8" src="/public/js/jquery-1.11.3.min.js"></script>
 
     <script type="text/javascript">
     /*var editor = UE.getEditor('myEditor', {
@@ -21,20 +23,20 @@
 </script>
 </head>
 <body>
-<a href="javascript:void(0);" onclick="upImage();">上传图片</a>
+<a href="javascript:void(0);" onclick="upImage();">上传多图</a>
 <a href="javascript:void(0);" onclick="upFiles();">上传文件</a>
+<input name="picture" id="picture" value="">
+<img id="preview" src="">
     <!-- 放置编辑器 -->
     <script type="text/plain" id="myEditor"></script>
-    <script type="text/plain" id="upload_ue"></script>
 </body>
 <script type="text/javascript">
+    $("body").append('<div id="upload_ue" style="display:none;"></div>');
     //重新实例化一个编辑器，防止在上面的editor编辑器中显示上传的图片或者文件
     var _editor = UE.getEditor('upload_ue',{
         serverUrl:'<?=DIRNAME?><?=printUrl('Upload','ueditor')?>',
         isShow:false,
         toolbars:[['simpleupload','scrawl','insertimage','attachment']],
-        initialFrameHeight:1,
-        initialFrameWidth:1,
     });
     _editor.ready(function () {
         //设置编辑器不可用
@@ -43,6 +45,7 @@
         //_editor.hide();
         //侦听图片上传
         _editor.addListener('beforeInsertImage', function (t, arg) {
+            console.log(arg[0]);
             //将地址赋值给相应的input
             $("#picture").attr("value", arg[0].src);
             //图片预览
@@ -53,7 +56,7 @@
             $("#file").attr("value", _editor.options.filePath + arg[0].url);
         })
     });
-    //弹出图片上传的对话框
+    //弹出多图图片上传的对话框
     function upImage() {
         var myImage = _editor.getDialog("insertimage");
         myImage.open();
